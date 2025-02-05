@@ -40,6 +40,11 @@ public class EmployeeDepartmentExample {
 			Department department = departmentRepository.findByName(departmentName);
 			
 			Employee newEmployee = new Employee(firstName, lastName);
+			
+			if (department.getEmployees().stream().filter(existing -> haveSameName(existing, newEmployee)).count() > 0) {
+				throw new RuntimeException("There is already an employee with that name");
+			}
+			
 			newEmployee.setDepartment(department);
 			employeeRepository.save(newEmployee);
 			
@@ -87,4 +92,10 @@ public class EmployeeDepartmentExample {
 			runnable.run();
 		});
 	}
+	
+	private boolean haveSameName(Employee existing, Employee newEmployee) {
+		return existing.getFirstName().equalsIgnoreCase(newEmployee.getFirstName()) && 
+				existing.getLastName().equalsIgnoreCase(newEmployee.getLastName());
+	}
+
 }
