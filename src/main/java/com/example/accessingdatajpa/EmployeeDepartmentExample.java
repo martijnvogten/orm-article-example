@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import jakarta.persistence.EntityManager;
+
 @SpringBootApplication
 public class EmployeeDepartmentExample {
 
@@ -23,6 +25,9 @@ public class EmployeeDepartmentExample {
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private EntityManager entityManager;
 	
 	@Autowired
 	EmployeeRepository employeeRepository;
@@ -37,6 +42,8 @@ public class EmployeeDepartmentExample {
 			Employee newEmployee = new Employee(firstName, lastName);
 			newEmployee.setDepartment(department);
 			employeeRepository.save(newEmployee);
+			
+			entityManager.flush(); // Need to force save to get the employee to show up in the email :(
 			
 			sendEmailWithEmployeeList(departmentName);
 		});
